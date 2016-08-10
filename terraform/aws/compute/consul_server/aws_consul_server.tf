@@ -39,7 +39,7 @@ resource "template_file" "consul_server" {
     atlas_token       = "${var.atlas_token}"
     provider          = "aws"
     region            = "aws-${var.region}"
-    datacenter        = "aws-${var.region}"
+    datacenter        = "${var.atlas_environment}"
     bootstrap_expect  = "${var.servers}"
     zone              = "${element(split(",", var.zones), count.index % length(split(",", var.zones)))}"
     machine_type      = "${var.machine_type}"

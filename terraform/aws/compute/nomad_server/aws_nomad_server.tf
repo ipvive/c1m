@@ -40,7 +40,7 @@ resource "template_file" "nomad_server" {
     atlas_token       = "${var.atlas_token}"
     provider          = "aws"
     region            = "aws-${var.region}"
-    datacenter        = "aws-${var.region}"
+    datacenter        = "${var.atlas_environment}"
     bootstrap_expect  = "${var.servers}"
     zone              = "${element(split(",", var.zones), count.index % length(split(",", var.zones)))}"
     machine_type      = "${var.machine_type}"
@@ -73,20 +73,6 @@ resource "aws_security_group" "nomad_server" {
     cidr_blocks = ["${var.vpc_cidr}"]
   }
 
-  ingress {
-    protocol    = "tcp"
-    from_port   = 22
-    to_port     = 22
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     protocol    = -1
     from_port   = 0
@@ -104,7 +90,6 @@ resource "aws_instance" "nomad_server" {
   subnet_id     = "${element(split(",", var.subnet_ids), count.index % length(split(",", var.subnet_ids)))}"
   user_data     = "${element(template_file.nomad_server.*.rendered, count.index)}"
 
-  associate_public_ip_address = true
   vpc_security_group_ids      = ["${aws_security_group.nomad_server.id}"]
 
   tags {
