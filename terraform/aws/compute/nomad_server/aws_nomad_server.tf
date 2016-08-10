@@ -129,39 +129,6 @@ resource "aws_instance" "nomad_server" {
   */
 }
 
-module "nomad_jobs" {
-  source = "../../../templates/nomad_job"
-
-  region            = "aws-${var.region}"
-  datacenter        = "aws-${var.region}"
-  classlogger_image = "hashicorp/nomad-c1m:0.1"
-  redis_count       = "1"
-  redis_image       = "hashidemo/redis:latest"
-  nginx_count       = "1"
-  nginx_image       = "hashidemo/nginx:latest"
-  nodejs_count      = "3"
-  nodejs_image      = "hashidemo/nodejs:latest"
-}
-
-resource "null_resource" "nomad_jobs" {
-  depends_on = ["aws_instance.nomad_server"]
-  count      = "${var.servers}"
-
-  triggers {
-    private_ips = "${join(",", aws_instance.nomad_server.*.private_ip)}"
-  }
-
-  connection {
-    user        = "ubuntu"
-    host        = "${element(aws_instance.nomad_server.*.public_ip, count.index)}"
-    private_key = "${var.private_key}"
-  }
-
-  provisioner "remote-exec" {
-    inline = "${module.nomad_jobs.cmd}"
-  }
-}
-
 output "names"       { value = "${join(",", aws_instance.nomad_server.*.id)}" }
 output "private_ips" { value = "${join(",", aws_instance.nomad_server.*.private_ip)}" }
 output "public_ips"  { value = "${join(",", aws_instance.nomad_server.*.public_ip)}" }
