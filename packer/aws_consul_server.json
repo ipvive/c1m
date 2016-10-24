@@ -73,6 +73,7 @@
       "inline": [
         "sh /ops/{{user `scripts_dir`}}/dependencies.sh",
         "sh /ops/{{user `scripts_dir`}}/go.sh",
+        "sh /ops/{{user `scripts_dir`}}/collectd.sh",
         "sh /ops/{{user `scripts_dir`}}/consul.sh {{user `config_dir`}}",
         "sh /ops/{{user `scripts_dir`}}/consul_server.sh {{user `config_dir`}}",
         "sh /ops/{{user `scripts_dir`}}/dnsmasq.sh {{user `dns_listen_addr`}}",
