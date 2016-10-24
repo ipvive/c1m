@@ -18,7 +18,7 @@ variable "nomad_log_level"   { }
 variable "consul_log_level"  { }
 variable "key_name"          { }
 variable "private_key"       { }
-variable "node_classes"      { }
+variable "node_classes"      { default = "1" }
 
 provider "aws" {
   region = "${var.region}"
